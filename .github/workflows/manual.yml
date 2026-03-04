@@ -1,11 +1,11 @@
-name: "JSBTC Parallel Audit"
+name: "JSBTC Ultimate Audit"
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  security_scans:
+  audit_and_scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
@@ -13,8 +13,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # مهم جداً لسونار لحساب تاريخ الكود
 
-      # تحديث CodeQL إلى النسخة v3 كما طلبت الصورة الأخيرة
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -23,9 +24,8 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
-      # تشغيل Snyk بالتوازي
-      - name: Run Snyk Scan
-        uses: snyk/actions/node@master
-        continue-on-error: true
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
