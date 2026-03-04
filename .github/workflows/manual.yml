@@ -1,0 +1,31 @@
+name: "Parallel Security Audit"
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  security_scans:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # فحص CodeQL: هذا الفحص سيكشف كيف "يسيل" المفتاح من الذاكرة
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: 'javascript'
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+      # فحص Snyk: سيكشف ضعف الإنتروبيا في ملف shamir_secret_sharing.js
+      - name: Run Snyk Scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
