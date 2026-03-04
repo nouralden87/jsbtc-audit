@@ -1,4 +1,4 @@
-name: "Parallel Security Audit"
+name: "JSBTC Parallel Audit"
 
 on:
   push:
@@ -12,18 +12,18 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # فحص CodeQL: هذا الفحص سيكشف كيف "يسيل" المفتاح من الذاكرة
+      # تحديث CodeQL إلى النسخة v3 كما طلبت الصورة الأخيرة
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: 'javascript'
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
 
-      # فحص Snyk: سيكشف ضعف الإنتروبيا في ملف shamir_secret_sharing.js
+      # تشغيل Snyk بالتوازي
       - name: Run Snyk Scan
         uses: snyk/actions/node@master
         continue-on-error: true
